@@ -52,10 +52,12 @@ exports.getUploader = function (artifactUploader, containerEngineName = "docker"
  * Eg. image `foo:latest` packaged as `foo_latest` uploaded as an artifact named `image_artifact_foo_latest`
  *      can be downloaded and loaded with ${downloadDir}/${packageName} i.e /tmp/foo_latest
  */
-exports.getDownloader = function (artifactDownloader, containerEngineName = "docker") {
+exports.getDownloader = function (artifactDownloader,
+                                  containerEngineName = "docker",
+				  dir = os.tmpdir()) {
     const containerEngine = getContainerEngine(containerEngineName);
     return async (image) => {
-        const downloadDir = await artifactDownloader(resolveArtifactName(image), os.tmpdir());
+        const downloadDir = await artifactDownloader(resolveArtifactName(image), dir);
 
         const imagePackagePath = path.join(downloadDir, resolvePackageName(image));
         await containerEngine.loadImage(imagePackagePath);
